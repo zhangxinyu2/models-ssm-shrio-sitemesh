@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+			  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+  <display-name>init webapp</display-name>
+  <!-- 配置spring的配置初始化 -->
+  <context-param>
+  	<param-name>contextConfigLocation</param-name>
+  	<param-value>
+  		classpath*:/applicationContext.xml,
+  		<!-- classpath*:/applicationContext-shiro.xml, -->
+  		classpath*:/applicationContext-mybatis.xml
+  	</param-value>
+  </context-param>
+  
+   <!-- 监听器 目的其实就在web程序启动时，读取web.xml 监听到动作，启动contextConfig -->
+  <listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+ </listener>
+ 
+ <!-- 中文乱码问题 -->
+ 	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- 编码最开始过滤 进行权限的过滤 之后进行页面过滤 在过滤渲染页面 -->
+	<!-- <filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping> -->
+	
+	 <!-- 配置springmvc的配置  配置前端的请求来源读取   配置数据处理结果的返回路径 -->
+  <servlet>
+		<servlet-name>springServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring-mvc.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>springServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	<!-- sitemesh 页面渲染 记住应该在springMVC后进行，因为页面还没出现，怎么可能进行渲染呢 -->
+	<filter>  
+        <filter-name>sitemesh</filter-name>  
+        <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>  
+    </filter>  
+    <filter-mapping>  
+        <filter-name>sitemesh</filter-name>  
+        <url-pattern>/*</url-pattern>  
+    </filter-mapping>  
+	
+	
+	<session-config>
+		<session-timeout>180</session-timeout>
+	</session-config>
+</web-app>

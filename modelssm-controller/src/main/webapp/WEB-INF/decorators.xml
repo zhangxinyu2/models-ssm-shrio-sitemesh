@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/WEB-INF/pageLayout/">
+	<excludes>
+		<pattern>../../static_1/css</pattern>
+	</excludes> 
+	<decorator name="default" page="layout.jsp">
+		<pattern>/*</pattern>
+	</decorator>
+	<decorator name="user" page="user.jsp">
+		<pattern>/user/addUser</pattern>
+	</decorator>
+	<decorator name="user" page="userList.jsp">
+		<pattern>/user/addUser</pattern>
+	</decorator>
+	<!-- <decorator name="dailymembers" page="daily/dailymembers.jsp">
+		<pattern>../daily/dailymembers</pattern>
+	</decorator> -->
+	
+
+</decorators>

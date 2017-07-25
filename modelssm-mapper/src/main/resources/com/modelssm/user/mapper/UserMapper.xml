@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.modelssm.user.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.modelssm.user.entity.User">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="edit_time" jdbcType="TIMESTAMP" property="editTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, name, age, create_time, edit_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_test
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_test
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.modelssm.user.entity.User">
+    insert into user_test (id, name, age, 
+      create_time, edit_time)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{age,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{editTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.modelssm.user.entity.User">
+    insert into user_test
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="age != null">
+        age,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="editTime != null">
+        edit_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        #{age,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        #{editTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.modelssm.user.entity.User">
+    update user_test
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="age != null">
+        age = #{age,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="editTime != null">
+        edit_time = #{editTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.modelssm.user.entity.User">
+    update user_test
+    set name = #{name,jdbcType=VARCHAR},
+      age = #{age,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      edit_time = #{editTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!-- 查询用户列表 -->
+   <select id="queryUserList"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_test
+    order by edit_time desc
+  </select>
+ <!-- 根据条件查询用户列表数 -->
+   <select id="queryUserTotal" parameterType="java.util.Map" resultType="Long">
+    select count(*)
+    	from user_test where 1=1
+      <if test="age != null and age!= &quot;&quot;"> 
+        and age = #{age,jdbcType=INTEGER}    
+      </if>
+      <if test="realName != null and &quot;&quot; != realName"> 
+        and name like CONCAT('%',#{realName,jdbcType=VARCHAR},'%')     
+      </if>
+  </select>
+  <!-- 根据条件查询用户列表 -->
+   <select id="queryPageUserList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select 
+		<include refid="Base_Column_List" />
+    	from user_test where 1=1
+      <if test="age != null and age!= &quot;&quot;"> 
+        and age = #{age,jdbcType=INTEGER}    
+      </if>
+      <if test="realName != null and &quot;&quot; != realName"> 
+        and name like CONCAT('%',#{realName,jdbcType=VARCHAR},'%')     
+      </if>
+      order by edit_time desc
+  </select>
+</mapper>

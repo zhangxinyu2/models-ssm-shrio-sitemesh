@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
+	default-lazy-init="true">
+	<description>Shiro安全配置</description>
+	<!-- shiro 核心管理 realm 管理核心代码   cacheManager 缓存设置-->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="shiroRealmImpl" />
+		<property name="cacheManager" ref="shiroEhcacheManager" />
+	</bean>
+	
+	<bean id="shiroRealmImpl" class="com.modelssm.shiro.realm.MyRealm" /> 
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />  
+		<property name="loginUrl" value="/login" /> <!-- 没有权限或者失败后跳转的页面 -->  
+		<property name="successUrl" value="/" />  
+		<property name="filterChainDefinitions">
+			<value>
+				/login = authc
+				/logout = logout
+				/static/** = anon
+				/api/** = anon
+				/register/** = anon
+				/login/** = anon 
+				/users/** = roles[admin]
+				/role/** = roles[admin]
+				/userr/** = roles[admin]
+				/permission/** = roles[admin]
+				/xhlt/** = anon 
+				/** = anon
+			</value>
+		</property>
+	</bean> 
+	<!-- 用户授权/认证信息Cache, 采用EhCache 缓存 -->  
+	<bean id="shiroEhcacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">  
+		<property name="cacheManagerConfigFile" value="classpath:ehcache-shiro.xml" />  
+	</bean>  
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+</beans>

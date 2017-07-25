@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/beans 
+     http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+     http://www.springframework.org/schema/security   
+     http://www.springframework.org/schema/security/spring-security-4.0.xsd  
+     http://www.springframework.org/schema/tx 
+     http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	 http://www.springframework.org/schema/jee 
+	 http://www.springframework.org/schema/jee/spring-jee-4.0.xsd 
+	 http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+	
+	<!-- 扫描所有的包zxy下 -->
+	<context:component-scan base-package="com.modelssm.*" />
+	
+	<!-- 配置sqlSessionFactory工厂 
+		相当于扫描 resources资源下的src/zxy/下的所有真实mapping文件 crud sql
+		另外也加载了一下mybatis 分页的设置
+	-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath*:com/modelssm/**/mapper/*Mapper.xml"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml" /> 
+    </bean>
+    
+    <!-- 相当于反射加载com.zxy.下的所有mapping包相当于去调用底层的真实mapping入口 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.modelssm.**.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    
+    <!-- 上面两步配好 需要把mybatis 与spring 结合起来 
+    	上面只是单独配置的mybatis ，spring没有和其关联-->
+    <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate"
+		scope="prototype">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- 在操作数据库时 注意配置事务 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+	
+</beans>
